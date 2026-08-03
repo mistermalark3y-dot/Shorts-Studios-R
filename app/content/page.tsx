@@ -9,7 +9,7 @@ import {
   Plus,
 } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase";
-
+import { IdeaGenerator } from "@/components/idea-generator";
 type Channel = {
   id: string;
   title: string;
@@ -265,7 +265,10 @@ export default function ContentPage() {
           {ideas.length} total projects
         </div>
       </div>
-
+      <IdeaGenerator
+  channels={channels}
+  onIdeasSaved={loadData}
+/>
       <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
         <div className="mb-5 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
