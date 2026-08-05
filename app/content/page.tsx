@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase";
 import { IdeaGenerator } from "@/components/idea-generator";
+
 type Channel = {
   id: string;
   title: string;
@@ -186,12 +188,17 @@ export default function ContentPage() {
     setSaving(false);
   }
 
-  async function moveIdea(idea: Idea, direction: "back" | "forward") {
+  async function moveIdea(
+    idea: Idea,
+    direction: "back" | "forward",
+  ) {
     const currentIndex = stages.findIndex(
       (stage) => stage.id === idea.status,
     );
 
-    if (currentIndex === -1) return;
+    if (currentIndex === -1) {
+      return;
+    }
 
     const nextIndex =
       direction === "forward"
@@ -200,7 +207,9 @@ export default function ContentPage() {
 
     const nextStage = stages[nextIndex];
 
-    if (!nextStage) return;
+    if (!nextStage) {
+      return;
+    }
 
     const supabase = getSupabaseClient();
 
@@ -265,10 +274,12 @@ export default function ContentPage() {
           {ideas.length} total projects
         </div>
       </div>
+
       <IdeaGenerator
-  channels={channels}
-  onIdeasSaved={loadData}
-/>
+        channels={channels}
+        onIdeasSaved={loadData}
+      />
+
       <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
         <div className="mb-5 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
@@ -281,7 +292,7 @@ export default function ContentPage() {
             </h2>
 
             <p className="text-sm text-zinc-400">
-              AI-generated ideas will enter through this same workflow later.
+              Add a custom idea manually.
             </p>
           </div>
         </div>
@@ -345,7 +356,7 @@ export default function ContentPage() {
               value={hook}
               onChange={(event) => setHook(event.target.value)}
               className="mt-2 min-h-24 w-full rounded-lg border border-zinc-700 bg-zinc-950 p-3"
-              placeholder="Example: Stop applying for jobs until you try these three tools."
+              placeholder="Example: Stop applying for jobs until you try these tools."
             />
           </label>
 
@@ -408,7 +419,9 @@ export default function ContentPage() {
                 className="min-w-0 rounded-xl border border-zinc-800 bg-zinc-950 p-3"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <h2 className="font-medium">{stage.label}</h2>
+                  <h2 className="font-medium">
+                    {stage.label}
+                  </h2>
 
                   <span className="rounded-full bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
                     {stageIdeas.length}
@@ -426,17 +439,22 @@ export default function ContentPage() {
                         key={idea.id}
                         className="rounded-lg border border-zinc-800 bg-zinc-900 p-4"
                       >
-                        <p className="text-xs text-zinc-500">
-                          {getChannelName(idea.channels)}
-                        </p>
+                        <Link
+                          href={`/scripts/${idea.id}`}
+                          className="block rounded-lg transition hover:text-zinc-300"
+                        >
+                          <p className="text-xs text-zinc-500">
+                            {getChannelName(idea.channels)}
+                          </p>
 
-                        <h3 className="mt-1 text-sm font-medium">
-                          {idea.title}
-                        </h3>
+                          <h3 className="mt-1 text-sm font-medium">
+                            {idea.title}
+                          </h3>
 
-                        <p className="mt-2 line-clamp-2 text-xs text-zinc-400">
-                          {idea.hook || idea.topic}
-                        </p>
+                          <p className="mt-2 line-clamp-2 text-xs text-zinc-400">
+                            {idea.hook || idea.topic}
+                          </p>
+                        </Link>
 
                         <div className="mt-4 flex items-center justify-between">
                           <span className="text-xs text-zinc-500">
