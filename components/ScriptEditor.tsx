@@ -10,6 +10,8 @@ type ScriptEditorProps = {
   title: string;
   topic: string;
   hook: string | null;
+  researchFacts: string;
+  researchNotes: string;
 };
 
 export function ScriptEditor({
@@ -18,12 +20,14 @@ export function ScriptEditor({
   title,
   topic,
   hook,
+  researchFacts,
+  researchNotes,
 }: ScriptEditorProps) {
   const [script, setScript] = useState(initialScript);
+  const [generating, setGenerating] = useState(false);
   const [saveStatus, setSaveStatus] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
-  const [generating, setGenerating] = useState(false);
 
   const firstRender = useRef(true);
 
@@ -61,15 +65,31 @@ export function ScriptEditor({
     setGenerating(true);
 
     window.setTimeout(() => {
+      const firstFact =
+        researchFacts
+          .split("\n")
+          .map((item) => item.trim())
+          .find(Boolean) ||
+        `${topic} is becoming increasingly relevant.`;
+
+      const firstNote =
+        researchNotes
+          .split("\n")
+          .map((item) => item.trim())
+          .find(Boolean) ||
+        "Focus on one clear takeaway.";
+
       const generatedScript = `${hook ?? `Here is what you need to know about ${topic}.`}
 
-Most people overlook this, but ${topic.toLowerCase()} is becoming more important than ever.
+${firstFact}
 
-First, ${title.toLowerCase()} matters because it creates immediate curiosity and gives the viewer a clear reason to keep watching.
+Here is why ${title.toLowerCase()} matters.
 
-Second, the strongest videos explain one useful point quickly instead of trying to cover everything at once.
+Most people try to cover too much at once. Instead, focus on one useful point and explain it clearly.
 
-Finally, end with a clear takeaway the viewer can remember or use immediately.
+${firstNote}
+
+The main takeaway is simple: give viewers something specific they can understand or use immediately.
 
 Follow for more short, useful videos like this.`;
 
@@ -86,7 +106,7 @@ Follow for more short, useful videos like this.`;
   }[saveStatus];
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+    <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-medium">Script</h2>
 
@@ -113,7 +133,7 @@ Follow for more short, useful videos like this.`;
               <Sparkles className="h-4 w-4" />
             )}
 
-            {generating ? "Generating..." : "Generate script"}
+            {generating ? "Generating..." : "Generate from research"}
           </button>
         </div>
       </div>
@@ -128,6 +148,6 @@ Follow for more short, useful videos like this.`;
       <p className="mt-2 text-xs text-zinc-500">
         Changes save automatically two seconds after you stop typing.
       </p>
-    </div>
+    </section>
   );
 }
